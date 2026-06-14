@@ -35,6 +35,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Tailwind v4's reset drops the pointer cursor on buttons; bring it back
+   for anything interactive (keeps the default arrow on disabled controls). */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+label:has(input[type="file"]) {
+  cursor: pointer;
+}
+
 html {
   scroll-behavior: smooth;
 }
