@@ -5,6 +5,7 @@ import { Figurita, type FiguritaProfile } from "@/components/Figurita";
 import { PersistProfile } from "@/components/PersistProfile";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ShareButton } from "@/components/ShareButton";
+import { AvatarUpload } from "@/components/AvatarUpload";
 import { computeCard, type Card } from "@/lib/scoring";
 import type { Answers, Position } from "@/lib/questions";
 
@@ -98,6 +99,7 @@ export default async function PerfilPage() {
 
         <div className="mt-6 flex w-full flex-col gap-3">
           <ShareButton username={profile.username} nombre={profile.nombre} />
+          <AvatarUpload hasPhoto={!!profile.foto_url} />
           <button
             disabled
             className="w-full cursor-not-allowed rounded-2xl border border-line px-5 py-4 text-center font-condensed text-base font-bold uppercase tracking-[0.12em] text-ink-faint"
