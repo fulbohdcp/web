@@ -54,7 +54,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       }
       // confirm-email ON → no session yet; confirm-email OFF → straight in
       if (data.session) {
-        router.push("/perfil");
+        router.push("/onboarding");
       } else {
         setCheckEmail(true);
         setLoading(false);
@@ -66,7 +66,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         setLoading(false);
         return;
       }
-      router.push("/perfil");
+      router.push("/onboarding");
       router.refresh();
     }
   }
@@ -146,8 +146,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
               ) : (
                 <>
                   ¿Todavía no?{" "}
-                  <Link href="/onboarding" className="font-bold text-green-light hover:underline">
-                    Armá tu figurita
+                  <Link href="/signup" className="font-bold text-green-light hover:underline">
+                    Creá tu cuenta
                   </Link>
                 </>
               )}

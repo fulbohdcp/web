@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Figurita, type FiguritaProfile } from "@/components/Figurita";
-import { PersistProfile } from "@/components/PersistProfile";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ShareButton } from "@/components/ShareButton";
 import { AvatarUpload } from "@/components/AvatarUpload";
@@ -20,8 +19,8 @@ export default async function PerfilPage() {
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
 
-  // Just signed up: no profile row yet → persist the onboarding result.
-  if (!profile) return <PersistProfile />;
+  // Account-first: no profile yet → go build/resume the figurita.
+  if (!profile) redirect("/onboarding");
 
   const { data: latestEval } = await supabase
     .from("self_evaluations")
@@ -121,12 +120,6 @@ export default async function PerfilPage() {
           >
             Cargar un partido · próximamente
           </button>
-          <Link
-            href="/onboarding"
-            className="text-center font-condensed text-sm font-bold uppercase tracking-[0.18em] text-ink-muted transition hover:text-ink"
-          >
-            Rehacer el cuestionario
-          </Link>
         </div>
       </div>
     </main>

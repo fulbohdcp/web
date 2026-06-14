@@ -10,38 +10,30 @@ import {
   type Section,
 } from "@/lib/questions";
 
-const STORAGE_KEY = "hdcp-onboarding";
-
-export function QuizEngine({ onComplete }: { onComplete: (answers: Answers) => void }) {
-  const [answers, setAnswers] = useState<Answers>({});
-  const [index, setIndex] = useState(0);
+export function QuizEngine({
+  onComplete,
+  onProgress,
+  initialAnswers = {},
+  initialIndex = 0,
+}: {
+  onComplete: (answers: Answers) => void;
+  onProgress?: (answers: Answers, index: number) => void;
+  initialAnswers?: Answers;
+  initialIndex?: number;
+}) {
+  const [answers, setAnswers] = useState<Answers>(initialAnswers);
+  const [index, setIndex] = useState(initialIndex);
   const [dir, setDir] = useState<1 | -1>(1);
-  const [hydrated, setHydrated] = useState(false);
-
-  // restore in-progress onboarding
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw);
-        if (saved?.answers) setAnswers(saved.answers);
-        if (typeof saved?.index === "number") setIndex(saved.index);
-      }
-    } catch {}
-    setHydrated(true);
-  }, []);
 
   const flow = useMemo(() => buildFlow(answers), [answers]);
   const safeIndex = Math.min(index, flow.length - 1);
   const q = flow[safeIndex];
   const total = flow.length;
 
+  // report progress to the caller (which debounces a DB save)
   useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ answers, index: safeIndex }));
-    } catch {}
-  }, [answers, safeIndex, hydrated]);
+    onProgress?.(answers, safeIndex);
+  }, [answers, safeIndex, onProgress]);
 
   const isAnswered = useCallback(
     (question: Question): boolean => {
@@ -58,9 +50,6 @@ export function QuizEngine({ onComplete }: { onComplete: (answers: Answers) => v
     setDir(1);
     if (safeIndex >= total - 1) {
       onComplete(answers);
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-      } catch {}
       return;
     }
     setIndex(safeIndex + 1);
@@ -97,9 +86,6 @@ export function QuizEngine({ onComplete }: { onComplete: (answers: Answers) => v
         const cur = indexRef.current;
         const nextFlow = buildFlow(ans);
         if (cur >= nextFlow.length - 1) {
-          try {
-            localStorage.removeItem(STORAGE_KEY);
-          } catch {}
           onComplete(ans);
         } else {
           setIndex(cur + 1);
@@ -109,7 +95,7 @@ export function QuizEngine({ onComplete }: { onComplete: (answers: Answers) => v
     [onComplete],
   );
 
-  if (!hydrated || !q) {
+  if (!q) {
     return <div className="min-h-[60vh]" />;
   }
 

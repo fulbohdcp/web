@@ -103,7 +103,7 @@ export default async function PublicProfile({ params }: Params) {
       </p>
 
       <Link
-        href="/onboarding"
+        href="/signup"
         className="mt-7 rounded-2xl px-7 py-4 text-center font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink shadow-[0_12px_40px_oklch(0.52_0.13_152_/_0.5)] transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
         style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
       >
