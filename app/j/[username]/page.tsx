@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/anon";
 import { Figurita, type FiguritaProfile } from "@/components/Figurita";
-import { computeCard, type Card } from "@/lib/scoring";
+import { Breakdown } from "@/components/Breakdown";
+import { computeCard, computeBreakdown, type Card, type BreakdownGroup } from "@/lib/scoring";
 import type { Answers, Position } from "@/lib/questions";
 
 type Params = { params: Promise<{ username: string }> };
@@ -69,6 +70,10 @@ export default async function PublicProfile({ params }: Params) {
   };
 
   const verified = (valCount ?? 0) >= 5;
+  const breakdownGroups: BreakdownGroup[] = latestEval?.answers
+    ? computeBreakdown(latestEval.answers as Answers, figProfile.posicion)
+    : [];
+  const hasBreakdown = breakdownGroups.some((g) => g.items.length > 0);
 
   return (
     <main className="relative flex min-h-[100svh] flex-col items-center px-5 pb-12 pt-10">
@@ -81,11 +86,19 @@ export default async function PublicProfile({ params }: Params) {
         HDCP
       </Link>
 
-      <div className="reveal mt-8">
+      <div className="reveal mt-8 flex w-full max-w-3xl flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center lg:gap-12">
         <Figurita card={card} profile={figProfile} verified={verified} />
+        {hasBreakdown && (
+          <div className="w-full max-w-[360px] lg:pt-2">
+            <p className="mb-4 font-condensed text-xs font-bold uppercase tracking-[0.3em] text-ink-muted">
+              Sus respuestas
+            </p>
+            <Breakdown groups={breakdownGroups} />
+          </div>
+        )}
       </div>
 
-      <p className="mt-6 text-center text-sm text-ink-muted">
+      <p className="mt-8 text-center text-sm text-ink-muted">
         {verified ? "Figurita verificada por sus compañeros." : "Figurita sin verificar todavía."}
       </p>
 

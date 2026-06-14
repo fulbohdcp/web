@@ -228,3 +228,52 @@ export const POS_ICON: Record<Position, string> = {
   Defensor: "🛡️",
   Arquero: "🧤",
 };
+
+// ── Breakdown: every sub-answer, grouped into the 3 stages ──
+export type Stage = "tecnico" | "fisico" | "actitud";
+export type BreakdownGroup = { stage: Stage; label: string; items: { label: string; value: number }[] };
+
+const SHORT_LABELS: Record<string, string> = {
+  // técnico
+  control: "Control", regate: "Regate", definicion: "Definición", pivote: "Pivote",
+  pase: "Pase", "cambio-frente": "Cambio de frente", vision: "Visión",
+  anticipo: "Anticipo", marca: "Marca", despeje: "Despeje", posicionamiento: "Posicionamiento",
+  reflejos: "Reflejos", salidas: "Salidas", pies: "Juego con los pies", "posicion-arco": "Posición en el arco",
+  // físico
+  velocidad: "Velocidad", fondo: "Resistencia", duelos: "Duelos", recuperacion: "Recuperación",
+  potencia: "Potencia", elasticidad: "Elasticidad", presencia: "Presencia", "aereo-arq": "Juego aéreo",
+  // actitud — equipo
+  morfon: "Generosidad", animo: "Ánimo", movimiento: "Movilidad sin pelota", retiene: "Suelta la pelota",
+  "organiza-constante": "Organiza la defensa", "gol-recibido": "Reacción al gol",
+  "avisa-rivales": "Comunicación", "confianza-def": "Confianza de la defensa",
+  // actitud — mental
+  momentoclave: "Momentos clave", resiliencia: "Resiliencia", competitivo: "Competitividad",
+  // actitud — situaciones
+  "pen-del": "Penales", "corner-del": "Córners ofensivos", cabeza: "Cabeza",
+  tirolibre: "Tiro libre", asistencia: "Asistencias", "aparece-area": "Llegada al área",
+  "corner-def": "Córners defensivos", "marca-corner": "Marca en pelota parada", "anticipo-aereo": "Anticipo aéreo",
+  "penales-arq": "Penales", "corners-arq": "Córners", "organiza-def": "Organiza pelota parada",
+  "posicion-pp": "Posición en pelota parada",
+  // actitud — liderazgo
+  liderazgo: "Liderazgo",
+};
+
+export function computeBreakdown(answers: Answers, pos: Position): BreakdownGroup[] {
+  const val = (k: string) => {
+    const v = answers[k];
+    return typeof v === "number" && v > 0 ? v : null;
+  };
+  const equipoKeys = pos === "Arquero" ? EQUIPO_KEYS_GK : EQUIPO_KEYS_OUT;
+  const defs: { stage: Stage; label: string; keys: string[] }[] = [
+    { stage: "tecnico", label: "Técnico", keys: TEC_KEYS[pos] },
+    { stage: "fisico", label: "Físico", keys: FIS_KEYS[pos] },
+    { stage: "actitud", label: "Actitud", keys: [...equipoKeys, ...MENTAL_KEYS, ...SIT_KEYS[pos], "liderazgo"] },
+  ];
+  return defs.map((d) => ({
+    stage: d.stage,
+    label: d.label,
+    items: d.keys
+      .map((k) => ({ label: SHORT_LABELS[k] ?? k, value: val(k) }))
+      .filter((it): it is { label: string; value: number } => it.value !== null),
+  }));
+}

@@ -6,7 +6,8 @@ import { PersistProfile } from "@/components/PersistProfile";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ShareButton } from "@/components/ShareButton";
 import { AvatarUpload } from "@/components/AvatarUpload";
-import { computeCard, type Card } from "@/lib/scoring";
+import { Breakdown } from "@/components/Breakdown";
+import { computeCard, computeBreakdown, type Card, type BreakdownGroup } from "@/lib/scoring";
 import type { Answers, Position } from "@/lib/questions";
 
 export default async function PerfilPage() {
@@ -57,12 +58,16 @@ export default async function PerfilPage() {
     foto: profile.foto_url ?? undefined,
   };
 
+  const breakdownGroups: BreakdownGroup[] = latestEval?.answers
+    ? computeBreakdown(latestEval.answers as Answers, figProfile.posicion)
+    : [];
+
   const validations = valCount ?? 0;
   const verified = validations >= 5;
   const pct = Math.min(100, (validations / 5) * 100);
 
   return (
-    <main className="relative mx-auto flex min-h-[100svh] w-full max-w-[460px] flex-col px-5 pb-12">
+    <main className="relative mx-auto flex min-h-[100svh] w-full max-w-3xl flex-col px-5 pb-12">
       <div
         className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[420px]"
         style={{ background: "radial-gradient(ellipse 90% 60% at 50% 0%, oklch(0.52 0.13 152 / 0.18), transparent 70%)" }}
@@ -79,9 +84,19 @@ export default async function PerfilPage() {
       </header>
 
       <div className="flex flex-col items-center">
-        <Figurita card={card} profile={figProfile} verified={verified} />
+        <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center lg:gap-12">
+          <Figurita card={card} profile={figProfile} verified={verified} />
+          {breakdownGroups.some((g) => g.items.length > 0) && (
+            <div className="w-full max-w-[360px] lg:pt-2">
+              <p className="mb-4 font-condensed text-xs font-bold uppercase tracking-[0.3em] text-ink-muted">
+                Tus respuestas
+              </p>
+              <Breakdown groups={breakdownGroups} />
+            </div>
+          )}
+        </div>
 
-        <div className="mt-7 w-full rounded-2xl border border-line bg-surface p-4">
+        <div className="mt-9 w-full max-w-[460px] rounded-2xl border border-line bg-surface p-4">
           <div className="mb-2 flex items-center justify-between text-xs text-ink-muted">
             <span>{verified ? "✅ HDCP verificado" : "🔒 Validá tu HDCP con 5 compañeros para publicarlo"}</span>
             <span className="font-display tracking-wider">{validations}/5</span>
@@ -97,7 +112,7 @@ export default async function PerfilPage() {
           )}
         </div>
 
-        <div className="mt-6 flex w-full flex-col gap-3">
+        <div className="mt-6 flex w-full max-w-[460px] flex-col gap-3">
           <ShareButton username={profile.username} nombre={profile.nombre} />
           <AvatarUpload hasPhoto={!!profile.foto_url} />
           <button
