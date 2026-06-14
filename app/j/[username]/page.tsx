@@ -5,6 +5,7 @@ import { createAnonClient } from "@/lib/supabase/anon";
 import { Figurita, type FiguritaProfile } from "@/components/Figurita";
 import { Breakdown } from "@/components/Breakdown";
 import { computeCard, computeBreakdown, type Card, type BreakdownGroup } from "@/lib/scoring";
+import { displayName } from "@/lib/profile";
 import type { Answers, Position } from "@/lib/questions";
 
 type Params = { params: Promise<{ username: string }> };
@@ -20,11 +21,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { username } = await params;
   const profile = await getProfile(username);
   if (!profile) return { title: "HDCP" };
+  const name = displayName(profile);
   return {
-    title: `${profile.nombre} · HDCP ${Number(profile.auto_score ?? 0).toFixed(1)}`,
+    title: `${name} · HDCP ${Number(profile.auto_score ?? 0).toFixed(1)}`,
     description: profile.titulo
-      ? `${profile.titulo}. Mirá la figurita de ${profile.nombre} en HDCP, el handicap del fútbol.`
-      : `Mirá la figurita de ${profile.nombre} en HDCP, el handicap del fútbol.`,
+      ? `${profile.titulo}. Mirá la figurita de ${name} en HDCP, el handicap del fútbol.`
+      : `Mirá la figurita de ${name} en HDCP, el handicap del fútbol.`,
   };
 }
 
@@ -61,7 +63,7 @@ export default async function PublicProfile({ params }: Params) {
       };
 
   const figProfile: FiguritaProfile = {
-    nombre: profile.nombre,
+    nombre: displayName(profile),
     posicion: (profile.posicion as Position) ?? "Mediocampista",
     categoria: profile.categoria === "pro" ? "pro" : "amateur",
     edad: profile.edad ?? undefined,

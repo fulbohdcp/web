@@ -20,6 +20,9 @@ export function buildProfileRow(userId: string, p: PendingProfile) {
     id: userId,
     username: String(a.usuario ?? "").toLowerCase(),
     nombre: String(a.nombre ?? "Jugador"),
+    apellido: (a.apellido as string) || null,
+    apodo: (a.apodo as string) || null,
+    display_pref: (a.display_pref as string) || "nombre",
     edad: num(a.edad),
     genero: (a.genero as string) ?? null,
     categoria: (a.categoria as string) ?? "amateur",
@@ -54,3 +57,16 @@ export function buildSelfEvalRow(userId: string, p: PendingProfile) {
 }
 
 export const PENDING_KEY = "hdcp-pending";
+
+// Resolve the name to show, honoring the user's display preference.
+export function displayName(p: {
+  nombre?: string | null;
+  apellido?: string | null;
+  apodo?: string | null;
+  display_pref?: string | null;
+}): string {
+  const nombre = (p.nombre || "Jugador").trim();
+  if (p.display_pref === "apodo" && p.apodo?.trim()) return p.apodo.trim();
+  if (p.display_pref === "nombre_apellido" && p.apellido?.trim()) return `${nombre} ${p.apellido.trim()}`;
+  return nombre;
+}

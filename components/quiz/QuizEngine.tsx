@@ -45,15 +45,20 @@ export function QuizEngine({
     [answers],
   );
 
+  const canAdvance = useCallback(
+    (question: Question) => isAnswered(question) || (question.kind === "text" && !!question.optional),
+    [isAnswered],
+  );
+
   const goNext = useCallback(() => {
-    if (!q || !isAnswered(q)) return;
+    if (!q || !canAdvance(q)) return;
     setDir(1);
     if (safeIndex >= total - 1) {
       onComplete(answers);
       return;
     }
     setIndex(safeIndex + 1);
-  }, [q, isAnswered, safeIndex, total, answers, onComplete]);
+  }, [q, canAdvance, safeIndex, total, answers, onComplete]);
 
   const goBack = useCallback(() => {
     if (safeIndex === 0) return;
@@ -119,7 +124,8 @@ export function QuizEngine({
 
       <Footer
         q={q}
-        answered={isAnswered(q)}
+        answered={canAdvance(q)}
+        isSkip={q.kind === "text" && !!q.optional && !isAnswered(q)}
         isLast={safeIndex >= total - 1}
         onNext={goNext}
       />
@@ -182,11 +188,13 @@ function ProgressHeader({
 function Footer({
   q,
   answered,
+  isSkip = false,
   isLast,
   onNext,
 }: {
   q: Question;
   answered: boolean;
+  isSkip?: boolean;
   isLast: boolean;
   onNext: () => void;
 }) {
@@ -204,7 +212,7 @@ function Footer({
         className="w-full rounded-2xl px-5 py-4 font-condensed text-lg font-extrabold uppercase tracking-[0.14em] text-ink shadow-[0_10px_30px_oklch(0.52_0.13_152_/_0.45)] transition-[transform,box-shadow] duration-200 ease-out enabled:hover:-translate-y-0.5 enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
         style={{ background: answered ? "linear-gradient(135deg, oklch(0.55 0.13 152), oklch(0.38 0.10 152))" : "oklch(0.26 0.016 152)" }}
       >
-        {isLast ? "Ver mi figurita →" : "Siguiente →"}
+        {isLast ? "Ver mi figurita →" : isSkip ? "Saltar →" : "Siguiente →"}
       </button>
     </div>
   );

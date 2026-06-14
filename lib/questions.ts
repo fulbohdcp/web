@@ -30,7 +30,7 @@ export const SECTION_META: Record<Section, { label: string; icon: string }> = {
 type Base = { id: string; section: Section; title: string; sublabel?: string };
 
 export type Question =
-  | (Base & { kind: "text"; placeholder?: string; maxLength?: number })
+  | (Base & { kind: "text"; placeholder?: string; maxLength?: number; optional?: boolean })
   | (Base & { kind: "choice"; options: { value: string; label: string; hint?: string }[] })
   | (Base & { kind: "multi"; min?: number; options: { value: string; label: string }[] })
   | (Base & { kind: "scale" }) // 1–10 self rating
@@ -69,7 +69,21 @@ const rated = (
 
 // ── IDENTIDAD (profile basics) ──
 export const IDENTITY: Question[] = [
-  { id: "nombre", section: "identidad", kind: "text", title: "¿Cómo te llamás?", sublabel: "Tu nombre o apodo de cancha.", placeholder: "Ej. Rodri", maxLength: 24 },
+  { id: "nombre", section: "identidad", kind: "text", title: "¿Cómo te llamás?", sublabel: "Tu nombre de pila.", placeholder: "Ej. Rodrigo", maxLength: 24 },
+  { id: "apellido", section: "identidad", kind: "text", title: "¿Y tu apellido?", sublabel: "Opcional. Podés saltearlo.", placeholder: "Ej. Pérez", maxLength: 24, optional: true },
+  { id: "apodo", section: "identidad", kind: "text", title: "¿Tenés apodo de cancha?", sublabel: "Opcional. Cómo te dicen jugando.", placeholder: "Ej. El Mago", maxLength: 24, optional: true },
+  {
+    id: "display_pref",
+    section: "identidad",
+    kind: "choice",
+    title: "¿Cómo querés aparecer?",
+    sublabel: "Lo que se muestra en tu figurita y tu perfil.",
+    options: [
+      { value: "nombre", label: "Solo mi nombre" },
+      { value: "nombre_apellido", label: "Nombre y apellido" },
+      { value: "apodo", label: "Mi apodo" },
+    ],
+  },
   {
     id: "usuario",
     section: "identidad",

@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { Figurita } from "@/components/Figurita";
 import { createAnonClient } from "@/lib/supabase/anon";
+import { displayName } from "@/lib/profile";
 import type { Card } from "@/lib/scoring";
 import type { Position } from "@/lib/questions";
 
 type RecentProfile = {
   username: string;
   nombre: string;
+  apellido: string | null;
+  apodo: string | null;
+  display_pref: string | null;
   posicion: Position;
   categoria: string;
   edad: number | null;
@@ -26,7 +30,7 @@ async function getRecentFiguritas(): Promise<RecentProfile[]> {
   const { data } = await supabase
     .from("profiles")
     .select(
-      "username,nombre,posicion,categoria,edad,ataja,foto_url,auto_score,tier,titulo,stat_tecnico,stat_fisico,stat_equipo",
+      "username,nombre,apellido,apodo,display_pref,posicion,categoria,edad,ataja,foto_url,auto_score,tier,titulo,stat_tecnico,stat_fisico,stat_equipo",
     )
     .not("auto_score", "is", null)
     .order("created_at", { ascending: false })
@@ -170,7 +174,7 @@ export default async function Landing() {
                   <Figurita
                     card={cardFromProfile(p)}
                     profile={{
-                      nombre: p.nombre,
+                      nombre: displayName(p),
                       posicion: p.posicion,
                       categoria: p.categoria === "pro" ? "pro" : "amateur",
                       edad: p.edad ?? undefined,

@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/ShareButton";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { Breakdown } from "@/components/Breakdown";
 import { computeCard, computeBreakdown, type Card, type BreakdownGroup } from "@/lib/scoring";
+import { displayName } from "@/lib/profile";
 import type { Answers, Position } from "@/lib/questions";
 
 export default async function PerfilPage() {
@@ -49,7 +50,7 @@ export default async function PerfilPage() {
       };
 
   const figProfile: FiguritaProfile = {
-    nombre: profile.nombre,
+    nombre: displayName(profile),
     posicion: (profile.posicion as Position) ?? "Mediocampista",
     categoria: profile.categoria === "pro" ? "pro" : "amateur",
     edad: profile.edad ?? undefined,
@@ -112,7 +113,7 @@ export default async function PerfilPage() {
         </div>
 
         <div className="mt-6 flex w-full max-w-[460px] flex-col gap-3">
-          <ShareButton username={profile.username} nombre={profile.nombre} />
+          <ShareButton username={profile.username} nombre={displayName(profile)} />
           <AvatarUpload hasPhoto={!!profile.foto_url} />
           <button
             disabled

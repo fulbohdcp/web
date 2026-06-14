@@ -5,7 +5,7 @@ import Link from "next/link";
 import { QuizEngine } from "./QuizEngine";
 import { Figurita, type FiguritaProfile } from "@/components/Figurita";
 import { createClient } from "@/lib/supabase/client";
-import { buildProfileRow, buildSelfEvalRow } from "@/lib/profile";
+import { buildProfileRow, buildSelfEvalRow, displayName } from "@/lib/profile";
 import { computeCard, type Card } from "@/lib/scoring";
 import type { Answers, Position } from "@/lib/questions";
 
@@ -64,7 +64,12 @@ export function OnboardingClient({
       }
 
       const profile: FiguritaProfile = {
-        nombre: (answers.nombre as string) || "Jugador",
+        nombre: displayName({
+          nombre: answers.nombre as string,
+          apellido: answers.apellido as string,
+          apodo: answers.apodo as string,
+          display_pref: answers.display_pref as string,
+        }),
         posicion: (answers.posicion as Position) || "Mediocampista",
         categoria: (answers.categoria as "amateur" | "pro") || "amateur",
         edad: answers.edad as string,

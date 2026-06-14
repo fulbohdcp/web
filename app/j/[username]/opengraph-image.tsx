@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { createAnonClient } from "@/lib/supabase/anon";
+import { displayName } from "@/lib/profile";
 
 export const alt = "Figurita HDCP";
 export const size = { width: 1200, height: 630 };
@@ -19,13 +20,13 @@ export default async function Image({ params }: { params: Promise<{ username: st
     ? (
         await supabase
           .from("profiles")
-          .select("nombre,titulo,posicion,auto_score,tier,stat_tecnico,stat_fisico,stat_equipo")
+          .select("nombre,apellido,apodo,display_pref,titulo,posicion,auto_score,tier,stat_tecnico,stat_fisico,stat_equipo")
           .eq("username", username.toLowerCase())
           .maybeSingle()
       ).data
     : null;
 
-  const nombre = (profile?.nombre ?? "Jugador").toUpperCase();
+  const nombre = (profile ? displayName(profile) : "Jugador").toUpperCase();
   const score = Number(profile?.auto_score ?? 0).toFixed(1);
   const titulo = profile?.titulo ?? "";
   const posicion = profile?.posicion ?? "";
