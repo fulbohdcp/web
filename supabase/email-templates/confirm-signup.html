@@ -1,0 +1,67 @@
+<!--
+  HDCP · email de confirmación de cuenta
+  Pegá este HTML en: Supabase → Authentication → Emails → Templates → "Confirm signup".
+  Usa la variable {{ .ConfirmationURL }} de Supabase.
+  Nota: los clientes de email (Gmail, etc.) bloquean web-fonts, así que el
+  "logo" usa una stack bold con tracking para evocar el estilo condensado.
+  Todo es table-based + estilos inline para máxima compatibilidad.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0;padding:0;background-color:#0e120f;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:480px;max-width:100%;background-color:#161b17;border:1px solid rgba(245,240,232,0.08);border-radius:20px;overflow:hidden;">
+
+        <!-- header band -->
+        <tr>
+          <td style="background-color:#0f4d25;background-image:linear-gradient(135deg,#1a7a3c,#0d4a1e);padding:22px 28px;">
+            <div style="font-family:'Arial Narrow',Arial,sans-serif;font-weight:800;font-size:26px;letter-spacing:6px;color:#f5f0e8;">HDCP</div>
+            <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,0.65);margin-top:4px;">El handicap del fútbol</div>
+          </td>
+        </tr>
+
+        <!-- body -->
+        <tr>
+          <td style="padding:34px 28px 8px 28px;">
+            <h1 style="margin:0 0 14px 0;font-family:'Arial Narrow',Arial,sans-serif;font-weight:800;font-size:28px;line-height:1.1;color:#f5f0e8;text-transform:uppercase;letter-spacing:0.5px;">
+              Confirmá tu cuenta<br>y guardá tu figurita
+            </h1>
+            <p style="margin:0 0 24px 0;font-family:Arial,sans-serif;font-size:15px;line-height:1.65;color:rgba(245,240,232,0.72);">
+              Ya respondiste el cuestionario y tenés tu número. Confirmá tu email y tu figurita
+              queda guardada en tu perfil, lista para que tus compañeros la validen.
+            </p>
+
+            <!-- button -->
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;">
+              <tr>
+                <td align="center" style="border-radius:14px;background-color:#1a7a3c;">
+                  <a href="{{ .ConfirmationURL }}"
+                     style="display:inline-block;padding:15px 32px;font-family:'Arial Narrow',Arial,sans-serif;font-weight:800;font-size:16px;letter-spacing:1.5px;text-transform:uppercase;color:#f5f0e8;text-decoration:none;border-radius:14px;">
+                    Confirmar mi cuenta
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 6px 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:rgba(245,240,232,0.4);">
+              Si el botón no funciona, copiá y pegá este enlace en tu navegador:
+            </p>
+            <p style="margin:0 0 8px 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;word-break:break-all;">
+              <a href="{{ .ConfirmationURL }}" style="color:#f5c518;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+            </p>
+          </td>
+        </tr>
+
+        <!-- footer -->
+        <tr>
+          <td style="padding:20px 28px 26px 28px;border-top:1px solid rgba(245,240,232,0.07);">
+            <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;line-height:1.6;color:rgba(245,240,232,0.35);">
+              Si no creaste una cuenta en HDCP, podés ignorar este mail.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+      <div style="font-family:'Arial Narrow',Arial,sans-serif;font-weight:800;font-size:18px;letter-spacing:4px;color:rgba(245,240,232,0.18);margin-top:20px;">HDCP</div>
+    </td>
+  </tr>
+</table>
