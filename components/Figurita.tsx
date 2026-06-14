@@ -51,11 +51,13 @@ export function Figurita({
   profile,
   verified = false,
   idNumber = 1,
+  compact = false,
 }: {
   card: Card;
   profile: FiguritaProfile;
   verified?: boolean;
   idNumber?: number;
+  compact?: boolean;
 }) {
   const t = TIERS[card.tier];
   const icon = POS_ICON[profile.posicion] ?? "⚽";
@@ -156,7 +158,7 @@ export function Figurita({
         <div className="mt-1 font-condensed text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: t.edge }}>
           {card.titulo}
         </div>
-        {profile.ataja === "si-bien" && (
+        {!compact && profile.ataja === "si-bien" && (
           <div
             className="mt-1.5 inline-flex items-center gap-1.5 rounded-full px-3 py-[3px] font-condensed text-[10px] font-bold tracking-[0.08em]"
             style={{ color: "oklch(0.72 0.14 152)", background: "oklch(0.52 0.13 152 / 0.25)", border: "1px solid oklch(0.64 0.15 152 / 0.4)" }}
@@ -164,9 +166,11 @@ export function Figurita({
             🧤 Ataja si hace falta
           </div>
         )}
-        <div className="mx-auto mt-1.5 max-w-[210px] text-[10px] italic leading-tight text-ink-muted">
-          “{card.descripcion}”
-        </div>
+        {!compact && card.descripcion && (
+          <div className="mx-auto mt-1.5 max-w-[210px] text-[10px] italic leading-tight text-ink-muted">
+            “{card.descripcion}”
+          </div>
+        )}
       </div>
 
       {/* stats */}

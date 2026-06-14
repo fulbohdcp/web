@@ -1,6 +1,51 @@
 import Link from "next/link";
 import { Figurita } from "@/components/Figurita";
+import { createAnonClient } from "@/lib/supabase/anon";
 import type { Card } from "@/lib/scoring";
+import type { Position } from "@/lib/questions";
+
+type RecentProfile = {
+  username: string;
+  nombre: string;
+  posicion: Position;
+  categoria: string;
+  edad: number | null;
+  ataja: string | null;
+  foto_url: string | null;
+  auto_score: number | null;
+  tier: Card["tier"] | null;
+  titulo: string | null;
+  stat_tecnico: number | null;
+  stat_fisico: number | null;
+  stat_equipo: number | null;
+};
+
+async function getRecentFiguritas(): Promise<RecentProfile[]> {
+  const supabase = createAnonClient();
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from("profiles")
+    .select(
+      "username,nombre,posicion,categoria,edad,ataja,foto_url,auto_score,tier,titulo,stat_tecnico,stat_fisico,stat_equipo",
+    )
+    .not("auto_score", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(12);
+  return (data as RecentProfile[]) ?? [];
+}
+
+function cardFromProfile(p: RecentProfile): Card {
+  return {
+    score: Number(p.auto_score ?? 0),
+    tier: p.tier ?? "verde",
+    titulo: p.titulo ?? "",
+    descripcion: "",
+    tecnico: Number(p.stat_tecnico ?? 0),
+    fisico: Number(p.stat_fisico ?? 0),
+    equipo: Number(p.stat_equipo ?? 0),
+    ageRange: "",
+  };
+}
 
 const SAMPLE: Card = {
   score: 9.1,
@@ -20,7 +65,9 @@ const STEPS = [
   { n: "04", h: "Cargás tus partidos", p: "Amistoso, torneo amateur o pro. Decís con quién jugaste y el equipo entero se califica. Tu figurita evoluciona." },
 ];
 
-export default function Landing() {
+export default async function Landing() {
+  const recent = await getRecentFiguritas();
+
   return (
     <main className="relative overflow-hidden">
       {/* atmosphere */}
@@ -95,6 +142,42 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* recent figuritas */}
+      {recent.length > 0 && (
+        <section className="py-10">
+          <div className="mx-auto mb-6 flex max-w-6xl items-end justify-between px-6">
+            <div>
+              <p className="font-condensed text-xs font-bold uppercase tracking-[0.3em] text-yellow">Últimas figuritas</p>
+              <h2 className="mt-2 font-condensed text-[clamp(26px,4vw,40px)] font-black uppercase leading-none text-ink">
+                Recién salidas de la cancha
+              </h2>
+            </div>
+          </div>
+          <div className="flex snap-x gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {recent.map((p) => (
+              <Link
+                key={p.username}
+                href={`/j/${p.username}`}
+                className="shrink-0 snap-start transition-transform duration-200 ease-out hover:-translate-y-1"
+              >
+                <Figurita
+                  card={cardFromProfile(p)}
+                  profile={{
+                    nombre: p.nombre,
+                    posicion: p.posicion,
+                    categoria: p.categoria === "pro" ? "pro" : "amateur",
+                    edad: p.edad ?? undefined,
+                    ataja: p.ataja ?? undefined,
+                    foto: p.foto_url ?? undefined,
+                  }}
+                  compact
+                />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* how it works */}
       <section className="mx-auto w-full max-w-6xl px-6 py-20">
