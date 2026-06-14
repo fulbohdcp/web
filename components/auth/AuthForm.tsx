@@ -1,19 +1,75 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 type Mode = "signup" | "login";
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const isSignup = mode === "signup";
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [notice, setNotice] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [checkEmail, setCheckEmail] = useState(false);
 
-  // NOTE: wired to Supabase Auth in the next step (needs project keys).
-  const pending = (provider: string) =>
-    setNotice(`Conectamos ${provider} con Supabase en el próximo paso. La interfaz ya está lista.`);
+  const notConfigured = !isSupabaseConfigured;
+
+  async function handleGoogle() {
+    if (notConfigured) return setError("Supabase todavía no está configurado (.env.local).");
+    setError(null);
+    setLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+    // on success the browser is redirected to Google
+  }
+
+  async function handleEmail(e: React.FormEvent) {
+    e.preventDefault();
+    if (notConfigured) return setError("Supabase todavía no está configurado (.env.local).");
+    setError(null);
+    setLoading(true);
+    const supabase = createClient();
+
+    if (isSignup) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      // confirm-email ON → no session yet; confirm-email OFF → straight in
+      if (data.session) {
+        router.push("/perfil");
+      } else {
+        setCheckEmail(true);
+        setLoading(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      router.push("/perfil");
+      router.refresh();
+    }
+  }
 
   return (
     <main className="relative flex min-h-[100svh] flex-col items-center justify-center px-5 py-12">
@@ -27,77 +83,93 @@ export function AuthForm({ mode }: { mode: Mode }) {
       </Link>
 
       <div className="mt-8 w-full max-w-[400px] rounded-3xl border border-line bg-surface p-7">
-        <h1 className="font-condensed text-3xl font-extrabold uppercase leading-none text-ink">
-          {isSignup ? "Creá tu cuenta" : "Bienvenido de vuelta"}
-        </h1>
-        <p className="mt-2 text-sm text-ink-muted">
-          {isSignup ? "Guardá tu figurita y empezá a sumar partidos." : "Entrá para ver tu figurita y tus amigos."}
-        </p>
+        {checkEmail ? (
+          <CheckEmail email={email} />
+        ) : (
+          <>
+            <h1 className="font-condensed text-3xl font-extrabold uppercase leading-none text-ink">
+              {isSignup ? "Creá tu cuenta" : "Bienvenido de vuelta"}
+            </h1>
+            <p className="mt-2 text-sm text-ink-muted">
+              {isSignup ? "Guardá tu figurita y empezá a sumar partidos." : "Entrá para ver tu figurita y tus amigos."}
+            </p>
 
-        <button
-          onClick={() => pending("Google")}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition hover:border-ink-muted"
-        >
-          <GoogleMark />
-          Continuar con Google
-        </button>
+            <button
+              onClick={handleGoogle}
+              disabled={loading}
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition hover:border-ink-muted disabled:opacity-50"
+            >
+              <GoogleMark />
+              Continuar con Google
+            </button>
 
-        <div className="my-5 flex items-center gap-3 text-ink-faint">
-          <span className="h-px flex-1 bg-line" />
-          <span className="font-condensed text-[11px] uppercase tracking-[0.2em]">o con email</span>
-          <span className="h-px flex-1 bg-line" />
-        </div>
+            <div className="my-5 flex items-center gap-3 text-ink-faint">
+              <span className="h-px flex-1 bg-line" />
+              <span className="font-condensed text-[11px] uppercase tracking-[0.2em]">o con email</span>
+              <span className="h-px flex-1 bg-line" />
+            </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            pending("el email");
-          }}
-          className="flex flex-col gap-3"
-        >
-          <Field label="Email" type="email" value={email} onChange={setEmail} placeholder="vos@email.com" autoComplete="email" />
-          <Field
-            label="Contraseña"
-            type="password"
-            value={password}
-            onChange={setPassword}
-            placeholder="••••••••"
-            autoComplete={isSignup ? "new-password" : "current-password"}
-          />
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-2xl px-5 py-3.5 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink transition-all duration-200 ease-out hover:-translate-y-0.5"
-            style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
-          >
-            {isSignup ? "Crear cuenta" : "Entrar"}
-          </button>
-        </form>
+            <form onSubmit={handleEmail} className="flex flex-col gap-3">
+              <Field label="Email" type="email" value={email} onChange={setEmail} placeholder="vos@email.com" autoComplete="email" />
+              <Field
+                label="Contraseña"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                placeholder="••••••••"
+                autoComplete={isSignup ? "new-password" : "current-password"}
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-2 w-full rounded-2xl px-5 py-3.5 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+                style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
+              >
+                {loading ? "Un segundo…" : isSignup ? "Crear cuenta" : "Entrar"}
+              </button>
+            </form>
 
-        {notice && (
-          <p className="mt-4 rounded-xl border border-[oklch(0.84_0.16_92_/_0.25)] bg-[oklch(0.84_0.16_92_/_0.08)] px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
-            {notice}
-          </p>
+            {error && (
+              <p className="mt-4 rounded-xl border border-[oklch(0.62_0.20_25_/_0.3)] bg-[oklch(0.62_0.20_25_/_0.1)] px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
+                {error}
+              </p>
+            )}
+
+            <p className="mt-6 text-center text-sm text-ink-muted">
+              {isSignup ? (
+                <>
+                  ¿Ya tenés cuenta?{" "}
+                  <Link href="/login" className="font-bold text-green-light hover:underline">
+                    Entrá
+                  </Link>
+                </>
+              ) : (
+                <>
+                  ¿Todavía no?{" "}
+                  <Link href="/onboarding" className="font-bold text-green-light hover:underline">
+                    Armá tu figurita
+                  </Link>
+                </>
+              )}
+            </p>
+          </>
         )}
-
-        <p className="mt-6 text-center text-sm text-ink-muted">
-          {isSignup ? (
-            <>
-              ¿Ya tenés cuenta?{" "}
-              <Link href="/login" className="font-bold text-green-light hover:underline">
-                Entrá
-              </Link>
-            </>
-          ) : (
-            <>
-              ¿Todavía no?{" "}
-              <Link href="/onboarding" className="font-bold text-green-light hover:underline">
-                Armá tu figurita
-              </Link>
-            </>
-          )}
-        </p>
       </div>
     </main>
+  );
+}
+
+function CheckEmail({ email }: { email: string }) {
+  return (
+    <div className="text-center">
+      <div className="text-4xl">📬</div>
+      <h1 className="mt-3 font-condensed text-2xl font-extrabold uppercase leading-tight text-ink">Revisá tu mail</h1>
+      <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        Te mandamos un link a <span className="text-ink">{email}</span> para confirmar tu cuenta. Cuando lo abras, tu
+        figurita queda guardada.
+      </p>
+      <p className="mt-4 text-xs text-ink-muted">¿No te llegó? Mirá en spam o probá de nuevo en un minuto.</p>
+    </div>
   );
 }
 
@@ -125,6 +197,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        required
         className="w-full rounded-2xl border border-line bg-bg px-4 py-3 text-ink outline-none transition placeholder:text-ink-faint focus:border-green-light"
       />
     </label>

@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { QuizEngine } from "@/components/quiz/QuizEngine";
 import { Figurita, type FiguritaProfile } from "@/components/Figurita";
 import { computeCard, type Card } from "@/lib/scoring";
+import { PENDING_KEY } from "@/lib/profile";
 import type { Answers, Position } from "@/lib/questions";
 
 export default function OnboardingPage() {
-  const [result, setResult] = useState<{ card: Card; profile: FiguritaProfile } | null>(null);
+  const [result, setResult] = useState<{ card: Card; profile: FiguritaProfile; answers: Answers } | null>(null);
 
   const onComplete = useCallback((answers: Answers) => {
     const card = computeCard(answers);
@@ -20,14 +21,21 @@ export default function OnboardingPage() {
       ataja: answers.ataja as string,
     };
     if (typeof window !== "undefined") window.scrollTo(0, 0);
-    setResult({ card, profile });
+    setResult({ card, profile, answers });
   }, []);
 
-  if (result) return <Result card={result.card} profile={result.profile} />;
+  if (result) return <Result card={result.card} profile={result.profile} answers={result.answers} />;
   return <QuizEngine onComplete={onComplete} />;
 }
 
-function Result({ card, profile }: { card: Card; profile: FiguritaProfile }) {
+function Result({ card, profile, answers }: { card: Card; profile: FiguritaProfile; answers: Answers }) {
+  // Stash the result so it gets saved to the account right after sign-up.
+  useEffect(() => {
+    try {
+      localStorage.setItem(PENDING_KEY, JSON.stringify({ answers, card }));
+    } catch {}
+  }, [answers, card]);
+
   return (
     <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[460px] flex-col items-center px-5 pb-12 pt-12">
       <div
