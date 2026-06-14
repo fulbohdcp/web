@@ -17,6 +17,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [checkEmail, setCheckEmail] = useState(false);
 
   const notConfigured = !isSupabaseConfigured;
+  // Google stays disabled until the OAuth provider is configured.
+  // Flip NEXT_PUBLIC_GOOGLE_ENABLED=true (and redeploy) once it's set up.
+  const googleEnabled = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
 
   async function handleGoogle() {
     if (notConfigured) return setError("Supabase todavía no está configurado (.env.local).");
@@ -95,12 +98,18 @@ export function AuthForm({ mode }: { mode: Mode }) {
             </p>
 
             <button
-              onClick={handleGoogle}
-              disabled={loading}
-              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition-[transform,border-color] duration-150 ease-out hover:border-ink-muted active:scale-[0.98] disabled:opacity-50"
+              onClick={googleEnabled ? handleGoogle : undefined}
+              disabled={!googleEnabled || loading}
+              title={!googleEnabled ? "Disponible pronto" : undefined}
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition-[transform,border-color] duration-150 ease-out enabled:hover:border-ink-muted enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <GoogleMark />
               Continuar con Google
+              {!googleEnabled && (
+                <span className="rounded-full border border-line px-2 py-0.5 font-condensed text-[9px] font-bold tracking-[0.12em] text-ink-muted">
+                  Pronto
+                </span>
+              )}
             </button>
 
             <div className="my-5 flex items-center gap-3 text-ink-faint">
