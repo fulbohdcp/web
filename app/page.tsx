@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Figurita } from "@/components/Figurita";
 import { createAnonClient } from "@/lib/supabase/anon";
+import { RecentMarquee } from "@/components/RecentMarquee";
 import { displayName } from "@/lib/profile";
 import type { Card } from "@/lib/scoring";
 import type { Position } from "@/lib/questions";
@@ -158,35 +159,28 @@ export default async function Landing() {
               </h2>
             </div>
           </div>
-          <div className="group overflow-hidden py-5">
-            <div
-              className="flex w-max animate-marquee gap-4 group-hover:[animation-play-state:paused]"
-              style={{ animationDuration: `${Math.max(30, recent.length * 7)}s` }}
-            >
-              {[...recent, ...recent].map((p, i) => (
-                <Link
-                  key={`${p.username}-${i}`}
-                  href={`/j/${p.username}`}
-                  aria-hidden={i >= recent.length}
-                  tabIndex={i >= recent.length ? -1 : undefined}
-                  className="shrink-0 transition-transform duration-200 ease-out hover:-translate-y-1"
-                >
-                  <Figurita
-                    card={cardFromProfile(p)}
-                    profile={{
-                      nombre: displayName(p),
-                      posicion: p.posicion,
-                      categoria: p.categoria === "pro" ? "pro" : "amateur",
-                      edad: p.edad ?? undefined,
-                      ataja: p.ataja ?? undefined,
-                      foto: p.foto_url ?? undefined,
-                    }}
-                    compact
-                  />
-                </Link>
-              ))}
-            </div>
-          </div>
+          <RecentMarquee>
+            {recent.map((p) => (
+              <Link
+                key={p.username}
+                href={`/j/${p.username}`}
+                className="shrink-0 transition-transform duration-200 ease-out hover:-translate-y-1"
+              >
+                <Figurita
+                  card={cardFromProfile(p)}
+                  profile={{
+                    nombre: displayName(p),
+                    posicion: p.posicion,
+                    categoria: p.categoria === "pro" ? "pro" : "amateur",
+                    edad: p.edad ?? undefined,
+                    ataja: p.ataja ?? undefined,
+                    foto: p.foto_url ?? undefined,
+                  }}
+                  compact
+                />
+              </Link>
+            ))}
+          </RecentMarquee>
         </section>
       )}
 

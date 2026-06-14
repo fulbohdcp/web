@@ -29,9 +29,6 @@
   --font-sans:      var(--font-dm-sans);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* registered in @theme so Tailwind v4 keeps the keyframe and emits .animate-marquee */
-  --animate-marquee: marquee 45s linear infinite;
 }
 
 * {
@@ -65,14 +62,6 @@ body {
 }
 .font-condensed {
   font-family: var(--font-condensed);
-}
-
-/* Auto-scrolling marquee (latest figuritas). Track holds the list twice;
-   translating -50% loops seamlessly. The .animate-marquee utility comes from
-   the @theme --animate-marquee token above. */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
 }
 
 /* Faint stadium scanlines on atmospheric surfaces */
