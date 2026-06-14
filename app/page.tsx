@@ -69,7 +69,7 @@ export default function Landing() {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/onboarding"
-              className="rounded-2xl px-7 py-4 text-center font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink shadow-[0_12px_40px_oklch(0.52_0.13_152_/_0.5)] transition-all duration-200 ease-out hover:-translate-y-0.5"
+              className="rounded-2xl px-7 py-4 text-center font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink shadow-[0_12px_40px_oklch(0.52_0.13_152_/_0.5)] transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
               style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
             >
               Armar mi figurita
@@ -129,7 +129,7 @@ export default function Landing() {
           </h2>
           <Link
             href="/onboarding"
-            className="mt-8 inline-block rounded-2xl px-8 py-4 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink shadow-[0_12px_40px_oklch(0.52_0.13_152_/_0.5)] transition-all duration-200 ease-out hover:-translate-y-0.5"
+            className="mt-8 inline-block rounded-2xl px-8 py-4 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink shadow-[0_12px_40px_oklch(0.52_0.13_152_/_0.5)] transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
             style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
           >
             Armar mi figurita

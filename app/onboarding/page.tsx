@@ -55,7 +55,7 @@ function Result({ card, profile, answers }: { card: Card; profile: FiguritaProfi
       </div>
 
       {/* validation gate */}
-      <div className="relative mt-7 w-full rounded-2xl border border-line bg-surface p-4">
+      <div className="reveal-2 relative mt-7 w-full rounded-2xl border border-line bg-surface p-4">
         <div className="mb-2 flex items-center justify-between text-xs text-ink-muted">
           <span>🔒 Validá tu HDCP con 5 compañeros para publicarlo</span>
           <span className="font-display tracking-wider">0/5</span>
@@ -69,10 +69,10 @@ function Result({ card, profile, answers }: { card: Card; profile: FiguritaProfi
         </p>
       </div>
 
-      <div className="relative mt-6 flex w-full flex-col gap-3">
+      <div className="reveal-3 relative mt-6 flex w-full flex-col gap-3">
         <Link
           href="/signup"
-          className="w-full rounded-2xl px-5 py-4 text-center font-condensed text-lg font-extrabold uppercase tracking-[0.14em] text-ink transition-all duration-200 ease-out hover:-translate-y-0.5"
+          className="w-full rounded-2xl px-5 py-4 text-center font-condensed text-lg font-extrabold uppercase tracking-[0.14em] text-ink transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
           style={{ background: "linear-gradient(135deg, oklch(0.55 0.13 152), oklch(0.38 0.10 152))" }}
         >
           Crear cuenta y guardar
@@ -92,7 +92,10 @@ function Result({ card, profile, answers }: { card: Card; profile: FiguritaProfi
 
       <style>{`
         @keyframes rise { from { opacity:0; transform: translateY(30px) scale(.96) } to { opacity:1; transform:none } }
+        @keyframes riseSoft { from { opacity:0; transform: translateY(16px) } to { opacity:1; transform:none } }
         .reveal { animation: rise .6s cubic-bezier(0.16,1,0.3,1) both }
+        .reveal-2 { animation: riseSoft .5s cubic-bezier(0.16,1,0.3,1) .14s both }
+        .reveal-3 { animation: riseSoft .5s cubic-bezier(0.16,1,0.3,1) .24s both }
       `}</style>
     </div>
   );

@@ -139,10 +139,10 @@ export function QuizEngine({ onComplete }: { onComplete: (answers: Answers) => v
       />
 
       <style>{`
-        @keyframes inRight { from { opacity:0; transform: translateX(26px) } to { opacity:1; transform:none } }
-        @keyframes inLeft  { from { opacity:0; transform: translateX(-26px) } to { opacity:1; transform:none } }
-        .anim-in-right { animation: inRight .34s cubic-bezier(0.16,1,0.3,1) both }
-        .anim-in-left  { animation: inLeft  .34s cubic-bezier(0.16,1,0.3,1) both }
+        @keyframes inRight { from { opacity:0; transform: translateX(22px) } to { opacity:1; transform:none } }
+        @keyframes inLeft  { from { opacity:0; transform: translateX(-22px) } to { opacity:1; transform:none } }
+        .anim-in-right { animation: inRight .28s cubic-bezier(0.16,1,0.3,1) both }
+        .anim-in-left  { animation: inLeft  .28s cubic-bezier(0.16,1,0.3,1) both }
       `}</style>
     </div>
   );
@@ -185,8 +185,8 @@ function ProgressHeader({
       </div>
       <div className="h-[3px] w-full overflow-hidden rounded-full bg-[oklch(1_0_0_/_0.08)]">
         <div
-          className="h-full rounded-full bg-green-light transition-[width] duration-500 ease-out"
-          style={{ width: `${Math.max(4, progress * 100)}%` }}
+          className="h-full w-full origin-left rounded-full bg-green-light transition-transform duration-500 ease-out"
+          style={{ transform: `scaleX(${Math.max(0.04, progress)})` }}
         />
       </div>
     </div>
@@ -215,7 +215,7 @@ function Footer({
       <button
         onClick={onNext}
         disabled={!answered}
-        className="w-full rounded-2xl px-5 py-4 font-condensed text-lg font-extrabold uppercase tracking-[0.14em] text-ink shadow-[0_10px_30px_oklch(0.52_0.13_152_/_0.45)] transition-all duration-200 ease-out enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
+        className="w-full rounded-2xl px-5 py-4 font-condensed text-lg font-extrabold uppercase tracking-[0.14em] text-ink shadow-[0_10px_30px_oklch(0.52_0.13_152_/_0.45)] transition-[transform,box-shadow] duration-200 ease-out enabled:hover:-translate-y-0.5 enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
         style={{ background: answered ? "linear-gradient(135deg, oklch(0.55 0.13 152), oklch(0.38 0.10 152))" : "oklch(0.26 0.016 152)" }}
       >
         {isLast ? "Ver mi figurita →" : "Siguiente →"}
@@ -287,7 +287,7 @@ function OptionCard({ selected, onClick, children }: { selected: boolean; onClic
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 text-left text-ink transition-all duration-150 ease-out active:scale-[0.99]"
+      className="flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 text-left text-ink transition-[transform,border-color,background-color,box-shadow] duration-150 ease-out active:scale-[0.97]"
       style={{
         borderColor: selected ? "oklch(0.64 0.15 152)" : "oklch(1 0 0 / 0.09)",
         background: selected ? "oklch(0.52 0.13 152 / 0.28)" : "oklch(0.21 0.014 152)",
@@ -400,7 +400,7 @@ function ScalePicker({ value, onPick }: { value: number | undefined; onPick: (v:
             <button
               key={n}
               onClick={() => onPick(n)}
-              className="flex aspect-square items-center justify-center rounded-xl border font-display text-2xl transition-all duration-150 active:scale-95"
+              className="flex aspect-square items-center justify-center rounded-xl border font-display text-2xl transition-[transform,border-color,background-color] duration-150 ease-out active:scale-95"
               style={{
                 borderColor: on ? color : "oklch(1 0 0 / 0.10)",
                 background: on ? color.replace(")", " / 0.20)") : "oklch(0.21 0.014 152)",

@@ -97,7 +97,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <button
               onClick={handleGoogle}
               disabled={loading}
-              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition hover:border-ink-muted disabled:opacity-50"
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-3.5 font-condensed text-base font-bold uppercase tracking-[0.1em] text-ink transition-[transform,border-color] duration-150 ease-out hover:border-ink-muted active:scale-[0.98] disabled:opacity-50"
             >
               <GoogleMark />
               Continuar con Google
@@ -122,7 +122,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-full rounded-2xl px-5 py-3.5 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+                className="mt-2 w-full rounded-2xl px-5 py-3.5 font-condensed text-lg font-extrabold uppercase tracking-[0.12em] text-ink transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 disabled:hover:translate-y-0"
                 style={{ background: "linear-gradient(135deg, oklch(0.56 0.14 152), oklch(0.38 0.10 152))" }}
               >
                 {loading ? "Un segundo…" : isSignup ? "Crear cuenta" : "Entrar"}
