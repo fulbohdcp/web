@@ -204,8 +204,9 @@ function Footer({
   isLast: boolean;
   onNext: () => void;
 }) {
-  // single-tap types auto-advance, so no primary button needed there
-  const showButton = q.kind === "text" || q.kind === "scale" || q.kind === "multi";
+  // single-tap types (choice, rated, scale) auto-advance; only text and
+  // multi-select need a primary button to confirm.
+  const showButton = q.kind === "text" || q.kind === "multi";
   if (!showButton) {
     return <div className="pb-8 pt-2 text-center font-condensed text-[11px] uppercase tracking-[0.2em] text-ink-faint">Tocá una opción</div>;
   }
@@ -276,7 +277,7 @@ function QuestionView({
           />
         )}
 
-        {q.kind === "scale" && <ScalePicker value={value as number | undefined} onSet={(v) => onSet(q.id, v)} />}
+        {q.kind === "scale" && <ScalePicker value={value as number | undefined} onPick={(v) => onPick(q.id, v)} />}
       </div>
     </div>
   );
@@ -372,22 +373,39 @@ function MultiSelect({
   );
 }
 
-function ScalePicker({ value, onSet }: { value: number | undefined; onSet: (v: number) => void }) {
+// Perceptual ramp red → amber → green so the scale means the same thing
+// to everyone: low numbers read "flojo", high numbers read "élite".
+const SCALE_COLORS = [
+  "oklch(0.61 0.20 25)", // 1
+  "oklch(0.64 0.19 40)", // 2
+  "oklch(0.68 0.18 55)", // 3
+  "oklch(0.75 0.17 70)", // 4
+  "oklch(0.81 0.16 84)", // 5
+  "oklch(0.84 0.16 96)", // 6
+  "oklch(0.82 0.16 112)", // 7
+  "oklch(0.76 0.17 130)", // 8
+  "oklch(0.70 0.17 145)", // 9
+  "oklch(0.64 0.16 152)", // 10
+];
+
+function ScalePicker({ value, onPick }: { value: number | undefined; onPick: (v: number) => void }) {
   const current = value ?? 0;
   return (
     <div>
       <div className="grid grid-cols-5 gap-2">
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
           const on = current === n;
+          const color = SCALE_COLORS[n - 1];
           return (
             <button
               key={n}
-              onClick={() => onSet(n)}
+              onClick={() => onPick(n)}
               className="flex aspect-square items-center justify-center rounded-xl border font-display text-2xl transition-all duration-150 active:scale-95"
               style={{
-                borderColor: on ? "oklch(0.84 0.16 92)" : "oklch(1 0 0 / 0.09)",
-                background: on ? "oklch(0.84 0.16 92 / 0.18)" : "oklch(0.21 0.014 152)",
-                color: on ? "oklch(0.86 0.16 92)" : "oklch(0.95 0.013 95 / 0.7)",
+                borderColor: on ? color : "oklch(1 0 0 / 0.10)",
+                background: on ? color.replace(")", " / 0.20)") : "oklch(0.21 0.014 152)",
+                color,
+                boxShadow: on ? `0 0 0 1px ${color}` : "none",
               }}
             >
               {n}
@@ -395,9 +413,10 @@ function ScalePicker({ value, onSet }: { value: number | undefined; onSet: (v: n
           );
         })}
       </div>
-      <div className="mt-4 flex items-center justify-between font-condensed text-sm uppercase tracking-[0.12em]">
-        <span className="text-ink-faint">{current ? "Tu nivel" : "Elegí del 1 al 10"}</span>
-        <span className="font-bold text-green-light">{current ? SCALE_DESC[current] : ""}</span>
+      <div className="mt-3 flex items-center justify-between font-condensed text-[11px] font-bold uppercase tracking-[0.14em]">
+        <span style={{ color: SCALE_COLORS[0] }}>← Flojo</span>
+        <span className="text-ink-faint">{current ? SCALE_DESC[current] : "Tocá tu nivel"}</span>
+        <span style={{ color: SCALE_COLORS[9] }}>Élite →</span>
       </div>
     </div>
   );
