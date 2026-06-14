@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────
+   HDCP design tokens — stadium night × Panini album
+   Refined from the pilot. All color in OKLCH, neutrals
+   tinted toward pitch green. Never pure black / white.
+   ─────────────────────────────────────────────── */
+@theme {
+  --color-bg:          oklch(0.16 0.012 150);
+  --color-surface:     oklch(0.21 0.014 152);
+  --color-surface-2:   oklch(0.26 0.016 152);
+  --color-line:        oklch(0.95 0.013 95 / 0.08);
+
+  --color-ink:         oklch(0.95 0.013 95);
+  --color-ink-soft:    oklch(0.95 0.013 95 / 0.72);
+  --color-ink-muted:   oklch(0.95 0.013 95 / 0.45);
+  --color-ink-faint:   oklch(0.95 0.013 95 / 0.22);
+
+  --color-green:       oklch(0.52 0.13 152);
+  --color-green-light: oklch(0.64 0.15 152);
+  --color-green-deep:  oklch(0.38 0.10 152);
+
+  --color-yellow:      oklch(0.84 0.16 92);
+  --color-red:         oklch(0.62 0.20 25);
+  --color-blue:        oklch(0.70 0.13 245);
+
+  --font-display:   var(--font-bebas);
+  --font-condensed: var(--font-barlow);
+  --font-sans:      var(--font-dm-sans);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+.font-condensed {
+  font-family: var(--font-condensed);
+}
+
+/* Faint stadium scanlines on atmospheric surfaces */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    oklch(1 0 0) 2px,
+    oklch(1 0 0) 3px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
