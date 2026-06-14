@@ -158,9 +158,9 @@ export default async function Landing() {
               </h2>
             </div>
           </div>
-          <div className="group overflow-hidden">
+          <div className="group overflow-hidden py-5">
             <div
-              className="flex w-max animate-marquee gap-4 pb-4 group-hover:[animation-play-state:paused]"
+              className="flex w-max animate-marquee gap-4 group-hover:[animation-play-state:paused]"
               style={{ animationDuration: `${Math.max(30, recent.length * 7)}s` }}
             >
               {[...recent, ...recent].map((p, i) => (
