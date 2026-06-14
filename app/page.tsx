@@ -154,27 +154,34 @@ export default async function Landing() {
               </h2>
             </div>
           </div>
-          <div className="flex snap-x gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {recent.map((p) => (
-              <Link
-                key={p.username}
-                href={`/j/${p.username}`}
-                className="shrink-0 snap-start transition-transform duration-200 ease-out hover:-translate-y-1"
-              >
-                <Figurita
-                  card={cardFromProfile(p)}
-                  profile={{
-                    nombre: p.nombre,
-                    posicion: p.posicion,
-                    categoria: p.categoria === "pro" ? "pro" : "amateur",
-                    edad: p.edad ?? undefined,
-                    ataja: p.ataja ?? undefined,
-                    foto: p.foto_url ?? undefined,
-                  }}
-                  compact
-                />
-              </Link>
-            ))}
+          <div className="group overflow-hidden">
+            <div
+              className="flex w-max animate-marquee gap-4 pb-4 group-hover:[animation-play-state:paused]"
+              style={{ animationDuration: `${Math.max(30, recent.length * 7)}s` }}
+            >
+              {[...recent, ...recent].map((p, i) => (
+                <Link
+                  key={`${p.username}-${i}`}
+                  href={`/j/${p.username}`}
+                  aria-hidden={i >= recent.length}
+                  tabIndex={i >= recent.length ? -1 : undefined}
+                  className="shrink-0 transition-transform duration-200 ease-out hover:-translate-y-1"
+                >
+                  <Figurita
+                    card={cardFromProfile(p)}
+                    profile={{
+                      nombre: p.nombre,
+                      posicion: p.posicion,
+                      categoria: p.categoria === "pro" ? "pro" : "amateur",
+                      edad: p.edad ?? undefined,
+                      ataja: p.ataja ?? undefined,
+                      foto: p.foto_url ?? undefined,
+                    }}
+                    compact
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}

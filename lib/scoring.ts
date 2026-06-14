@@ -265,9 +265,10 @@ export function computeBreakdown(answers: Answers, pos: Position): BreakdownGrou
   };
   const equipoKeys = pos === "Arquero" ? EQUIPO_KEYS_GK : EQUIPO_KEYS_OUT;
   const defs: { stage: Stage; label: string; keys: string[] }[] = [
-    { stage: "tecnico", label: "Técnico", keys: TEC_KEYS[pos] },
+    // set pieces / special situations are skills → live in Técnico, not Actitud
+    { stage: "tecnico", label: "Técnico", keys: [...TEC_KEYS[pos], ...SIT_KEYS[pos]] },
     { stage: "fisico", label: "Físico", keys: FIS_KEYS[pos] },
-    { stage: "actitud", label: "Actitud", keys: [...equipoKeys, ...MENTAL_KEYS, ...SIT_KEYS[pos], "liderazgo"] },
+    { stage: "actitud", label: "Actitud", keys: [...equipoKeys, ...MENTAL_KEYS, "liderazgo"] },
   ];
   return defs.map((d) => ({
     stage: d.stage,
