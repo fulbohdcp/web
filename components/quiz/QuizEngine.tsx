@@ -392,7 +392,7 @@ function ScalePicker({ value, onPick }: { value: number | undefined; onPick: (v:
   const current = value ?? 0;
   return (
     <div>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-10 gap-1.5">
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
           const on = current === n;
           const color = SCALE_COLORS[n - 1];
@@ -400,7 +400,7 @@ function ScalePicker({ value, onPick }: { value: number | undefined; onPick: (v:
             <button
               key={n}
               onClick={() => onPick(n)}
-              className="flex aspect-square items-center justify-center rounded-xl border font-display text-2xl transition-[transform,border-color,background-color] duration-150 ease-out active:scale-95"
+              className="relative flex h-14 items-center justify-center rounded-lg border font-display text-xl transition-[transform,border-color,background-color] duration-150 ease-out hover:z-10 hover:scale-[1.18] active:scale-95"
               style={{
                 borderColor: on ? color : "oklch(1 0 0 / 0.10)",
                 background: on ? color.replace(")", " / 0.20)") : "oklch(0.21 0.014 152)",
@@ -413,10 +413,10 @@ function ScalePicker({ value, onPick }: { value: number | undefined; onPick: (v:
           );
         })}
       </div>
-      <div className="mt-3 flex items-center justify-between font-condensed text-[11px] font-bold uppercase tracking-[0.14em]">
-        <span style={{ color: SCALE_COLORS[0] }}>← Flojo</span>
+      <div className="mt-3 flex items-center justify-between font-condensed text-[11px] font-bold uppercase tracking-[0.16em]">
+        <span style={{ color: SCALE_COLORS[0] }}>Flojo</span>
         <span className="text-ink-faint">{current ? SCALE_DESC[current] : "Tocá tu nivel"}</span>
-        <span style={{ color: SCALE_COLORS[9] }}>Élite →</span>
+        <span style={{ color: SCALE_COLORS[9] }}>Élite</span>
       </div>
     </div>
   );
