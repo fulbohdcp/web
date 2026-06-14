@@ -75,8 +75,8 @@ const avg = (s: Record<string, number>, ...keys: string[]) => {
 
 const TEC_KEYS: Record<Position, string[]> = {
   Delantero: ["control", "regate", "definicion", "pivote"],
-  Mediocampista: ["control", "pase", "cambio-frente", "vision"],
-  Defensor: ["anticipo", "marca", "despeje", "posicionamiento"],
+  Mediocampista: ["control", "pase-corto", "pase-largo", "cambio-frente", "vision"],
+  Defensor: ["anticipo", "marca", "despeje", "posicionamiento", "salida-pies"],
   Arquero: ["reflejos", "salidas", "pies", "posicion-arco"],
 };
 const FIS_KEYS: Record<Position, string[]> = {
@@ -86,8 +86,8 @@ const FIS_KEYS: Record<Position, string[]> = {
   Arquero: ["elasticidad", "presencia", "aereo-arq"],
 };
 const SIT_KEYS: Record<Position, string[]> = {
-  Delantero: ["pen-del", "corner-del", "cabeza"],
-  Mediocampista: ["tirolibre", "asistencia", "aparece-area"],
+  Delantero: ["pen-del", "corner-del", "cabeza", "remate-afuera"],
+  Mediocampista: ["tirolibre", "asistencia", "aparece-area", "remate-medio"],
   Defensor: ["corner-def", "marca-corner", "anticipo-aereo"],
   Arquero: ["penales-arq", "corners-arq", "organiza-def", "posicion-pp"],
 };
@@ -236,7 +236,10 @@ export type BreakdownGroup = { stage: Stage; label: string; items: { label: stri
 const SHORT_LABELS: Record<string, string> = {
   // técnico
   control: "Control", regate: "Regate", definicion: "Definición", pivote: "Pivote",
-  pase: "Pase", "cambio-frente": "Cambio de frente", vision: "Visión",
+  pase: "Pase", "pase-corto": "Pase corto", "pase-largo": "Pase largo",
+  "cambio-frente": "Cambio de frente", vision: "Visión",
+  "remate-medio": "Remate media distancia", "remate-afuera": "Remate de afuera",
+  "salida-pies": "Salida con los pies",
   anticipo: "Anticipo", marca: "Marca", despeje: "Despeje", posicionamiento: "Posicionamiento",
   reflejos: "Reflejos", salidas: "Salidas", pies: "Juego con los pies", "posicion-arco": "Posición en el arco",
   // físico

@@ -301,13 +301,15 @@ const BY_POSITION: Record<Position, { tecnico: Question[]; fisico: Question[]; s
         { value: 6, label: "Sumo de vez en cuando, cuando llego bien" },
         { value: 2, label: "El juego aéreo no es lo mío, prefiero ras del suelo" },
       ]),
+      scale("remate-afuera", "situaciones", "Remate de afuera / media distancia"),
     ],
   },
   Mediocampista: {
     tecnico: [
       scale("control", "tecnico", "Control y primer toque"),
-      scale("pase", "tecnico", "Pase corto y largo"),
-      scale("cambio-frente", "tecnico", "Cambio de frente / pase largo preciso"),
+      scale("pase-corto", "tecnico", "Pase corto / al pie"),
+      scale("pase-largo", "tecnico", "Pase largo"),
+      scale("cambio-frente", "tecnico", "Cambio de frente / pase preciso"),
       scale("vision", "tecnico", "Visión de juego / lectura del partido"),
     ],
     fisico: [
@@ -331,6 +333,7 @@ const BY_POSITION: Record<Position, { tecnico: Question[]; fisico: Question[]; s
         { value: 6, label: "Llego seguido pero no siempre defino bien" },
         { value: 2, label: "Me quedo en el medio, no soy de aparecer" },
       ]),
+      scale("remate-medio", "situaciones", "Remate de media distancia"),
     ],
   },
   Defensor: {
@@ -339,6 +342,7 @@ const BY_POSITION: Record<Position, { tecnico: Question[]; fisico: Question[]; s
       scale("marca", "tecnico", "Marca / presión al rival con balón"),
       scale("despeje", "tecnico", "Despeje / cabeza defensiva"),
       scale("posicionamiento", "tecnico", "Posicionamiento defensivo"),
+      scale("salida-pies", "tecnico", "Salida con los pies / salida limpia"),
     ],
     fisico: [
       scale("fondo", "fisico", "Fondo / resistencia"),
