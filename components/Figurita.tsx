@@ -70,7 +70,7 @@ export function Figurita({
 
   return (
     <div
-      className="relative w-[272px] max-w-[88vw] overflow-hidden rounded-[22px] shadow-[0_30px_80px_oklch(0.16_0.012_150_/_0.8)]"
+      className="relative w-[272px] max-w-[88vw] shrink-0 overflow-hidden rounded-[22px] shadow-[0_30px_80px_oklch(0.16_0.012_150_/_0.8)]"
       style={{ background: "oklch(0.18 0.013 270)" }}
     >
       {/* top-light shine */}
